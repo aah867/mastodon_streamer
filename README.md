@@ -26,3 +26,7 @@ Expected to fulfill the following functional requirements:
    - publishing different user stats
 
 ![application architecture](./docs/app_arch.jpg)
+
+
+# How To
+

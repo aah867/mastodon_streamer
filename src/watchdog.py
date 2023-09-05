@@ -6,8 +6,6 @@ import argparse
 import datetime
 from threading import Timer
 import os
-import settings
-import producer
 
 '''Maxium waiting time for a new post before unfollowing the user'''
 class Watchdog:

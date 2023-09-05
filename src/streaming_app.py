@@ -2,7 +2,7 @@ import mastodon
 from mastodon import Mastodon
 import argparse
 import settings
-import producer
+import event_listener
 import watchdog
 from kafka_serializer import kafka_serializer
 from utils.log import log
@@ -61,15 +61,14 @@ def main():
         settings.watchdog = watchdog.Watchdog(args.watchdog, watchdog.watchExpired)
         settings.watchdog.timer.start()
 
-    # Mastodon.create_app(
-    #     'pytooterapp',
-    #     api_base_url = 'https://mastodon.social',
-    #     to_file = 'pytooter_clientcred.secret'
-    # )
+    Mastodon.create_app(
+        'pytooterapp',
+        api_base_url = 'https://mastodon.social',
+        to_file = 'streaming_app.secret'
+    )
 
     # mastodon = Mastodon(api_base_url = settings.base_url)
-
-    mastodon = Mastodon(client_id = 'pytooter_clientcred.secret',)
+    mastodon = Mastodon(client_id = 'streaming_app.secret',)
     mastodon.log_in(
         'hasib.iut@gmail.com',
         'Abcd1234',
@@ -77,9 +76,9 @@ def main():
     )
 
     if args.public:
-        mastodon.stream_public(producer.Listener())
+        mastodon.stream_public(event_listener.Listener())
     else:
-        mastodon.stream_local(producer.Listener())
+        mastodon.stream_local(event_listener.Listener())
 
 if __name__ == '__main__':
     main()
