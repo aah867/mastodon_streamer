@@ -3,16 +3,25 @@ from mastodon import Mastodon
 import argparse
 import settings
 import producer
+import watchdog
+from kafka_serializer import kafka_serializer
 from utils.log import log
 
-'''
-CLI for the app - initial interface.
-TODO: convert it ot REST-API + json using SPA/Mobile app
-'''
+"""
+Main streamer application - parses the commandline interface
+to start the application according to the configuration.
+"""
 def main():
     settings.init()
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument(
+        '--enableKafka',
+        help='Whether to enable Kafka producer.',
+        action='store_true',
+        required=False,
+        default=False)
 
     parser.add_argument(
         '--public',
@@ -20,6 +29,12 @@ def main():
         action='store_true',
         required=False,
         default=False)
+
+    parser.add_argument(
+        '--watchdog',
+        help='enable watchdog timer of n seconds',
+        type=int,
+        required=False)
 
     parser.add_argument(
         '--quiet',
@@ -37,6 +52,14 @@ def main():
     args = parser.parse_args()
 
     settings.base_url=args.baseURL
+    settings.enable_kafka=args.enableKafka
+
+    if settings.enable_kafka:
+        settings.topic_name, settings.producer = kafka_serializer()
+
+    if args.watchdog:
+        settings.watchdog = watchdog.Watchdog(args.watchdog, watchdog.watchExpired)
+        settings.watchdog.timer.start()
 
     # Mastodon.create_app(
     #     'pytooterapp',

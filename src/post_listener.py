@@ -3,11 +3,16 @@ from mastodon import Mastodon
 from bs4 import BeautifulSoup
 import datetime
 import settings
+import watchdog
 
 # Listener for Mastodon events
 class Listener(mastodon.StreamListener):
 
     def on_update(self, status):
+
+        if settings.watchdog:
+            settings.watchdog.reset()
+
         m_text = BeautifulSoup(status.content, 'html.parser').text
         num_tags = len(status.tags)
         num_chars = len(m_text)
@@ -18,6 +23,7 @@ class Listener(mastodon.StreamListener):
         m_user = status.account.username
 
         app=''
+        # attribute only available on local
         if hasattr(status, 'application'):
             app = status.application.get('name')
 
@@ -42,4 +48,8 @@ class Listener(mastodon.StreamListener):
 
         if not settings.quiet:
             print(f'{m_user} {m_lang}', m_text[:30])
+
+        if settings.enable_kafka:
+            settings.producer.produce(topic = settings.topic_name, value = value_topic)
+            settings.producer.flush()
 
