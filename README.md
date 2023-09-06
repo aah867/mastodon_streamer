@@ -14,9 +14,11 @@ A networking framework to receive public posts from one or more Mastodon user ac
  - Two consumer groups
    - each group contains one consumer
 
-## Phase-3: Scalable software architecture
-
 ```Work In Progress!!!```
+
+![MVP application architecture](./docs/app_arch.jpg)
+
+## Phase-3: Scalable software architecture
 
 Expected to fulfill the following functional requirements:
  - Receives posts from different user accounts
@@ -24,8 +26,8 @@ Expected to fulfill the following functional requirements:
    - publishing received posts
    - publishing different user stats
 
-![application architecture](./docs/app_arch.jpg)
 
+![Application architecture](./docs/modular_arch.png)
 
 # Installation and Executing the Application
 
